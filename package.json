@@ -1,0 +1,24 @@
+{
+  "name": "capstone-backend",
+  "module": "./src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "bun --watch run ./src/index.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/bun": "latest",
+    "eslint": "^9.15.0",
+    "globals": "^15.12.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^7.10.0",
+    "@hapi/hapi": "^21.3.12",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7"
+  }
+}
