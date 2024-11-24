@@ -10,8 +10,6 @@ class UserAuth {
       throw new TypeError("data must be a valid object!");
     }
 
-
-
     this.email = data.email;
     this.name = data.name;
     this.password = data.password;
@@ -43,6 +41,34 @@ class UserAuth {
       return userDoc.data();
     } catch (error) {
       throw new Error(`Error finding user ${email}:`, error);
+    }
+  }
+
+  // Development helper method
+  static async deleteAll() {
+    try {
+      // console.log("Deleting all documents in batches...");
+      const batchSize = 100;
+      let query = usersAuthCollection.limit(batchSize);
+
+      while (true) {
+        const snapshot = await query.get();
+        if (snapshot.empty) {
+          break;
+        }
+
+        const batch = db.batch();
+        snapshot.docs.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+
+        await batch.commit();
+        // console.log(`Deleted ${snapshot.size} documents`);
+      }
+
+      // console.log("All documents deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting documents: ", error);
     }
   }
 }
