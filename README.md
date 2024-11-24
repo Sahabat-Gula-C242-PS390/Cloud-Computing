@@ -17,7 +17,7 @@ This project is under development, but we will do our best to keep things stable
 ## Usage
 
 You can use our latest commercial API deployment in
-[sahabat-gula-dev.us.to](https://sahabat-gula-dev.us.to).
+[sahabat-gula-dev.us.to](http://sahabat-gula-dev.us.to).
 
 ## Deploying Yourself
 
