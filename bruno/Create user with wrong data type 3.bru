@@ -1,0 +1,19 @@
+meta {
+  name: Create user with wrong data type 3
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/auth/signup
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "foofoofaafaa@example.com",
+    "name": "foofoofaafaa",
+    "password": 1
+  }
+}
