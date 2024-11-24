@@ -13,6 +13,9 @@ lerna-debug.log*
 # Bun
 bun.lockb
 
+# Build
+build
+
 # Caches
 
 .cache

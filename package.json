@@ -3,13 +3,14 @@
   "module": "./src/index.js",
   "type": "module",
   "scripts": {
-    "start": "bun --watch run ./src/index.js"
+    "start": "bun --watch run ./src/index.js",
+    "start:prod": "bun run ./build/index.js",
+    "build": "bun build ./src/index.js --outdir ./build --target bun --external @hapi/hapi --external bun --external @google-cloud/firestore --minify --sourcemap=linked"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@types/bun": "latest",
-    "eslint": "^9.15.0",
-    "globals": "^15.12.0"
+    "eslint": "^9.15.0"
   },
   "peerDependencies": {
     "typescript": "^5.6.3"
