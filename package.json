@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^7.10.0",
-    "@hapi/hapi": "^21.3.12",
-    "dotenv": "^16.4.5"
+    "@hapi/hapi": "^21.3.12"
   }
 }
