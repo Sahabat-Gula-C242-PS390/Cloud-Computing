@@ -14,10 +14,20 @@ export async function signup(request, h) {
 
     for (const [field, value] of Object.entries(required)) {
       if (!value) {
-        throw new TypeError(`${field} is required!`);
+        return h
+          .response({
+            status: "failed",
+            error: `${field} is required!`,
+          })
+          .code(400);
       }
       if (typeof value !== "string") {
-        throw new TypeError(`${field} must be a valid string!`);
+        return h
+          .response({
+            status: "failed",
+            error: `${field} must be a valid string!`,
+          })
+          .code(400);
       }
     }
 
@@ -44,7 +54,7 @@ export async function signup(request, h) {
     return h
       .response({
         status: "success",
-        data: userEmail,
+        data: { email: userEmail },
       })
       .code(201);
   } catch (error) {
