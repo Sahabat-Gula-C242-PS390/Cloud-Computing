@@ -20,4 +20,6 @@ const init = async () => {
   console.log("Server running on %s", server.info.uri);
 };
 
-init();
+init().catch((err) => {
+  console.error(err);
+});
