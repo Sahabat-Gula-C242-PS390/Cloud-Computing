@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 class login {
   /**
    * Handles user login.
+   *
    * @param {Object} req - The HTTP request object.
    * @param {Object} res - The HTTP response object.
    * @returns {Promise<void>}
@@ -65,4 +66,4 @@ class login {
   }
 }
 
-export default login;
+export { login };

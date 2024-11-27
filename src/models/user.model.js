@@ -53,7 +53,7 @@ class User {
    * @returns {string} The userId of the user.
    * @throws {Error} If the email already exists.
    */
-  static async save() {
+  async save() {
     const queryValidation = await User.findOne({
       field: "email",
       value: this.email,
