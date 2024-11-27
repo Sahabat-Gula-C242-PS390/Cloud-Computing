@@ -54,7 +54,7 @@ export async function signup(request, h) {
     return h
       .response({
         status: "success",
-        data: { email: userEmail },
+        email,
       })
       .code(201);
   } catch (error) {

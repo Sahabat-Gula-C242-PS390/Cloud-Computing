@@ -4,6 +4,14 @@ import { Timestamp } from "@google-cloud/firestore";
 
 const usersCollection = db.collection("users");
 
+/**
+ * Create a user.
+ *
+ * @param {Object} data - The user data.
+ * @param {string} data.name - The user's name.
+ * @param {string} data.email - The user's email.
+ * @param {string} data.password - The user's password.
+ */
 class User {
   constructor(data) {
     if (data === undefined || typeof data !== "object") {
@@ -14,7 +22,6 @@ class User {
       name: data.name,
       email: data.email,
       password: data.password,
-      gender: data.gender,
     };
 
     for (const [field, value] of Object.entries(required)) {
@@ -24,23 +31,29 @@ class User {
       if (typeof value !== "string") {
         throw new TypeError(`${field} must be a valid string!`);
       }
-      if (field === "gender" && !["male", "female"].includes(value)) {
-        throw new TypeError("gender must be lowercase 'male' or 'female'!");
-      }
     }
 
     this.userId = randomUUIDv7();
     this.name = data.name;
     this.email = data.email;
     this.password = data.password;
-    this.gender = data.gender;
-    this.dailySugarLimit = 30;
-    this.currentSugarIntake = 0;
+    this.status = "inactive";
     this.createdAt = Timestamp.now();
     this.updatedAt = this.createdAt;
   }
 
-  async save() {
+  /**
+   * Save and upload the user data into Firestore database on users collection.
+   * This will be used only for registration purposes. To add details to the
+   * user data, you should use `update()`.
+   *
+   * If the email used already exists, it will throw an error. Otherwise, it
+   * will return the userId of the user.
+   *
+   * @returns {string} The userId of the user.
+   * @throws {Error} If the email already exists.
+   */
+  static async save() {
     const queryValidation = await User.findOne({
       field: "email",
       value: this.email,
@@ -58,9 +71,9 @@ class User {
         name: this.name,
         email: this.email,
         password: this.password,
-        gender: this.gender,
-        dailySugarLimit: this.dailySugarLimit,
-        currentSugarIntake: this.currentSugarIntake,
+        // gender: this.gender,
+        // dailySugarLimit: this.dailySugarLimit,
+        // currentSugarIntake: this.currentSugarIntake,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
       });
@@ -69,10 +82,19 @@ class User {
       return this.userId;
     } catch (error) {
       // console.error("Error adding document: ", error);
-      throw new Error("Error adding document: ", error);
+      throw new Error(`Error adding document: ${error}`);
     }
   }
 
+  /**
+   * Find a user by userId. The method will return null if the user is not
+   * found.
+   *
+   * @param {string} userId - The userId of the user.
+   * @returns {Object | null} The user data or null if not found.
+   * @throws {TypeError} If the userId is not a valid string.
+   * @throws {Error} If an error occurs while finding the user.
+   */
   static async findById(userId) {
     if (!userId || typeof userId !== "string") {
       throw new TypeError("userId must be a valid string!");
@@ -91,11 +113,25 @@ class User {
         updatedAt: userData.updatedAt.toDate(),
       };
     } catch (error) {
-      // console.error(`Error finding user ${userId}:`, error);
-      throw new Error(`Error finding user ${userId}:`, error);
+      throw new Error(`Error finding user ${userId}: ${error}`);
     }
   }
 
+  /**
+   * Find a user by specific field and value. The field specifies the document
+   * field to query. The field value will be compared with the value given and
+   * returns the first one it founds. The method will return null if the user is
+   * not found.
+   *
+   * @param {Object} query - The query object.
+   * @param {string} query.field - The field to query.
+   * @param {string} query.value - The value to compare with the field.
+   * @returns {Object | null} The user data or null if not found.
+   * @throws {TypeError} If the query is not a valid object.
+   * @throws {TypeError} If the field is not a valid string.
+   * @throws {TypeError} If the value is not a valid string.
+   * @throws {Error} If an error occurs while finding the user.
+   */
   static async findOne(query) {
     if (!query || typeof query !== "object") {
       throw new TypeError("query must be a valid object!");
@@ -131,13 +167,41 @@ class User {
       };
     } catch (error) {
       // console.error(`Error finding query ${query}:`, error);
-      throw new Error(`Error finding documents with query ${query}:`, error);
+      throw new Error(`Error finding documents with query ${query}: ${error}`);
     }
   }
 
-  static async find(query) {
+  /**
+   * Find all users by specific field and value. The field specifies the
+   * document field to query. The field value will be compared with the value
+   * given and returns all the users it founds. You can also specify the order
+   * (default to `__name__`) and the direction of the order (default to `asc`).
+   *
+   * The results are all the users that matches the query and maps the documents
+   * into an array of objects. If no documents are found, it will return an
+   * empty array.
+   *
+   * @param {Object} query - The query object.
+   * @param {string} query.field - The field to query.
+   * @param {string} query.value - The value to compare with the field.
+   * @param {string} [query.orderBy] - The field to order the results.
+   * @param {"asc" | "desc"} [query.orderDirection] - The direction of the
+   *   order.
+   * @returns {Array} The array of user data or an empty array if not found.
+   * @throws {TypeError} If the query is not a valid object.
+   * @throws {TypeError} If the field is not a valid string.
+   * @throws {TypeError} If the value is not a valid string.
+   * @throws {Error} If an error occurs while finding the user.
+   */
+  static async find(
+    query = {
+      field: "",
+      value: "",
+      orderBy: "__name__",
+      orderDirection: "asc",
+    },
+  ) {
     try {
-      // console.log("Finding documents with query: ", query);
       if (query.orderBy === undefined) {
         query.orderBy = "__name__";
       }
@@ -161,7 +225,7 @@ class User {
         }));
     } catch (error) {
       // console.error("Error finding documents:", error);
-      throw new Error(`Error finding documents with query ${query}:`, error);
+      throw new Error(`Error finding documents with query ${query}: ${error}`);
     }
   }
 
@@ -181,7 +245,7 @@ class User {
           updatedAt: data.updatedAt.toDate(),
         }));
     } catch (error) {
-      throw new Error("Error finding all documents:", error);
+      throw new Error(`Error finding all documents: ${error}`);
     }
   }
 
@@ -231,7 +295,7 @@ class User {
       await usersCollection.doc(userId).update(updates);
       return await User.findById(userId);
     } catch (error) {
-      throw new Error(`Error updating user ${userId}:`, error);
+      throw new Error(`Error updating user ${userId}: ${error}`);
     }
   }
 
@@ -249,7 +313,7 @@ class User {
       await usersCollection.doc(userId).delete();
       return (await User.findById(userId)) === null;
     } catch (error) {
-      throw new Error(`Error deleting user ${userId}:`, error);
+      throw new Error(`Error deleting user ${userId}: ${error}`);
     }
   }
 
@@ -260,16 +324,12 @@ class User {
       name: this.name,
       email: this.email,
       password: this.password,
-      gender: this.gender,
-      dailySugarLimit: this.dailySugarLimit,
-      currentSugarIntake: this.currentSugarIntake,
+      // gender: this.gender,
+      // dailySugarLimit: this.dailySugarLimit,
+      // currentSugarIntake: this.currentSugarIntake,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
-  }
-
-  getUserId() {
-    return this.userId;
   }
 
   static async deleteAll() {
