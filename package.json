@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^7.10.0",
-    "@hapi/hapi": "^21.3.12"
+    "@hapi/hapi": "^21.3.12",
+    "firebase-admin": "^13.0.1"
   }
 }
