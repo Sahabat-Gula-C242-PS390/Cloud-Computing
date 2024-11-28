@@ -50,7 +50,7 @@ class User {
    * If the email used already exists, it will throw an error. Otherwise, it
    * will return the userId of the user.
    *
-   * @returns {string} The userId of the user.
+   * @returns {Promise<string>} The userId of the user.
    * @throws {Error} If the email already exists.
    */
   async save() {
@@ -229,6 +229,14 @@ class User {
     }
   }
 
+  /**
+   * Get all users in the collection. The results are all the users in the
+   * collection mapped into an array of objects. If no documents are found, it
+   * will return an empty array.
+   *
+   * @returns {Object[]} The array of user data or an empty array if not found.
+   * @throws {Error} If an error occurs while finding the user.
+   */
   static async findAll() {
     try {
       // console.log("Finding all documents...");

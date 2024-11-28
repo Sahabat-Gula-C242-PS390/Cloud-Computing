@@ -1,4 +1,4 @@
-import { signup, login } from "../handlers/auth.handler.js";
+import { signup, login, checkEmail } from "../handlers/auth.handler.js";
 // import { login } from "../handlers/login.js";
 
 const authRoutes = [
@@ -7,15 +7,22 @@ const authRoutes = [
     path: "/auth/signup",
     handler: signup,
   },
-  // {
-  //   method: "POST",
-  //   path: "/auth/verify",
-  //   handler: verify,
-  // },
+  {
+    method: "GET",
+    path: "/auth/signup",
+    handler: checkEmail,
+  },
   {
     method: "POST",
     path: "/auth/login",
     handler: login,
+  },
+  {
+    method: "*",
+    path: "/{any*}",
+    handler: (request, h) => {
+      return h.response({ status: "error", error: "Path not exist" }).code(404);
+    },
   },
 ];
 
