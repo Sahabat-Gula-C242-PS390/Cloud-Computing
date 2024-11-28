@@ -147,6 +147,91 @@ export async function login(request, h) {
   }
 }
 
+export async function changePassword(request, h) {
+  try {
+    const { userId, password, newPassword } = request.payload;
+
+    // Validasi input wajib
+    for (const [field, value] of Object.entries({ userId, password, newPassword })) {
+      if (!value || typeof value !== "string") {
+        return h
+          .response({
+            status: "failed",
+            error: `${field} is required and must be a valid string!`,
+          })
+          .code(400);
+      }
+    }
+
+    // Validasi panjang password baru
+    // Still Error
+    if (password.length < 8) {
+      return h
+        .response({
+          status: "failed",
+          error: "New password must be at least 8 characters!",
+        })
+        .code(400);
+    }
+
+    // Cari user berdasarkan userId
+    const user = await User.findOne({ field: "userId", value: userId });
+    if (!user) {
+      return h
+        .response({
+          status: "failed",
+          error: "User not found!",
+        })
+        .code(404);
+    }
+
+    // Verifikasi password lama
+    const ispasswordMatch = await Bun.password.verify(password, user.password);
+    if (!ispasswordMatch) {
+      return h
+        .response({
+          status: "failed",
+          error: "Old password is incorrect!",
+        })
+        .code(401);
+    }
+
+    // Cek apakah password baru sama dengan password lama
+    const isSamePassword = await Bun.password.verify(newPassword, user.password);
+    if (isSamePassword) {
+      return h
+        .response({
+          status: "failed",
+          error: "New password must be different from the old password!",
+        })
+        .code(400);
+    }
+
+    // Hash password baru dan update
+    // Still Error
+    const newArgonHash = await Bun.password.hash(newPassword);
+    user.password = newArgonHash;
+    // Simpan perubahan pada user yang sudah ada
+    await user.save();
+    return h
+      .response({
+        status: "success",
+        message: "Password updated successfully!",
+      })
+      .code(200);
+
+      } catch (error) {
+      return h
+        .response({
+          status: "failed",
+          error: error.message,
+        })
+        .code(500);
+  }
+}
+
+
+
 // export async function verify(request, h) {
 //   try {
 //     const { email, otpCode } = request.payload;
