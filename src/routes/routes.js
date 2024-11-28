@@ -1,4 +1,4 @@
-import { signup, login, checkEmail } from "../handlers/auth.handler.js";
+import { signup, login, checkEmail, changePassword } from "../handlers/auth.handler.js";
 // import { login } from "../handlers/login.js";
 
 const authRoutes = [
@@ -16,6 +16,11 @@ const authRoutes = [
     method: "POST",
     path: "/auth/login",
     handler: login,
+  },
+  {
+    method: "POST",
+    path: "/auth/change-password",
+    handler: changePassword,
   },
   {
     method: "*",
