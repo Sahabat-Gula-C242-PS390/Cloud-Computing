@@ -152,7 +152,8 @@ export async function changePassword(request, h) {
     const { userId, password, newPassword } = request.payload;
 
     // Validasi input wajib
-    for (const [field, value] of Object.entries({ userId, password, newPassword })) {
+    const requiredFields = { userId, password, newPassword };
+    for (const [field, value] of Object.entries(requiredFields)) {
       if (!value || typeof value !== "string") {
         return h
           .response({
@@ -164,18 +165,17 @@ export async function changePassword(request, h) {
     }
 
     // Validasi panjang password baru
-    // Still Error
-    if (password.length < 8) {
+    if (newPassword.length < 8) {
       return h
         .response({
           status: "failed",
-          error: "New password must be at least 8 characters!",
+          error: "New password must be at least 8 characters long!",
         })
         .code(400);
     }
 
     // Cari user berdasarkan userId
-    const user = await User.findOne({ field: "userId", value: userId });
+    const user = await User.findById(userId);
     if (!user) {
       return h
         .response({
@@ -186,8 +186,8 @@ export async function changePassword(request, h) {
     }
 
     // Verifikasi password lama
-    const ispasswordMatch = await Bun.password.verify(password, user.password);
-    if (!ispasswordMatch) {
+    const isPasswordMatch = await Bun.password.verify(password, user.password);
+    if (!isPasswordMatch) {
       return h
         .response({
           status: "failed",
@@ -207,29 +207,33 @@ export async function changePassword(request, h) {
         .code(400);
     }
 
-    // Hash password baru dan update
-    // Still Error
-    const newArgonHash = await Bun.password.hash(newPassword);
-    user.password = newArgonHash;
-    // Simpan perubahan pada user yang sudah ada
-    await user.save();
+    // Hash password baru
+    const hashedNewPassword = await Bun.password.hash(newPassword);
+
+    // Update password di database
+    const updatedUser = await User.update(userId, { password: hashedNewPassword });
+
     return h
       .response({
         status: "success",
         message: "Password updated successfully!",
+        data: {
+          userId: updatedUser.userId,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          updatedAt: updatedUser.updatedAt,
+        },
       })
       .code(200);
-
-      } catch (error) {
-      return h
-        .response({
-          status: "failed",
-          error: error.message,
-        })
-        .code(500);
+  } catch (error) {
+    return h
+      .response({
+        status: "failed",
+        error: error.message,
+      })
+      .code(500);
   }
 }
-
 
 
 // export async function verify(request, h) {
