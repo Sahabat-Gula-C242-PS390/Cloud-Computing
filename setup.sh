@@ -2,7 +2,7 @@
 
 # Update and install necessary packages
 sudo apt update
-sudo apt install -y curl gnupg nginx git
+sudo apt install -y curl gnupg nginx git unzip
 
 # Install Bun
 curl -fsSL https://bun.sh/install | bash
