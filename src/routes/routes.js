@@ -1,6 +1,6 @@
 import { signup, login, checkEmail } from "../handlers/auth.handler.js";
 import { createArticle, getArticles } from "../handlers/article.handler.js";
-import { getUser } from "../handlers/user.handler.js";
+import { deleteUser, getUser } from "../handlers/user.handler.js";
 // import { login } from "../handlers/login.js";
 
 const authRoutes = [
@@ -23,6 +23,11 @@ const authRoutes = [
     method: "GET",
     path: "/user/{userId}",
     handler: getUser,
+  },
+  {
+    method: "DELETE",
+    path: "/user/{userId}",
+    handler: deleteUser,
   },
   {
     method: "GET",

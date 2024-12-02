@@ -18,13 +18,12 @@ export async function signup(request, h) {
       riwayatDiabetes,
       tingkatAktivitas,
       konsumsiBuah,
+      kaloriHarian = 2645,
+      karbohidratHarian = 1455,
+      lemakHarian = 529,
+      proteinHarian = 379,
+      gulaHarian = 282,
     } = request.payload;
-
-    const kaloriHarian = 2645;
-    const karbohidratHarian = 1455;
-    const lemakHarian = 529;
-    const proteinHarian = 379;
-    const gulaHarian = 282;
 
     // const required = {
     //   email,

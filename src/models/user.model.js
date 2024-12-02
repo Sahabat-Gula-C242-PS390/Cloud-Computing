@@ -498,7 +498,7 @@ class User {
    * @throws {Error} If the userId is not found or if there is an error during
    *   deletion.
    */
-  static async delete(userId) {
+  static async findByIdAndDelete(userId) {
     const required = {
       userId,
     };
