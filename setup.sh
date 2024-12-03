@@ -3,8 +3,9 @@
 # Update and install necessary packages
 echo "Updating package lists..."
 sudo apt update
+
 echo "Installing necessary packages..."
-sudo apt install -y curl gnupg nginx git unzip
+sudo apt install -y curl gnupg nginx git unzip screen
 
 # Install Bun
 echo "Installing Bun..."
@@ -14,6 +15,7 @@ curl -fsSL https://bun.sh/install | bash
 echo "Adding Bun to PATH..."
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+source ~/.bashrc
 
 # Verify Bun installation
 echo "Verifying Bun installation..."
@@ -24,13 +26,16 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Get the public IP address
+PUBLIC_IP=$(curl -s https://api.ipify.org)
+
 # Set up Nginx configuration
 echo "Setting up Nginx configuration..."
 sudo tee /etc/nginx/sites-available/sahabat-gula <<EOF
 server {
     listen 80;
     client_max_body_size 10M;
-    server_name sahabat-gula-dev.us.to;
+    server_name $PUBLIC_IP sahabat-gula-dev.us.to;
     server_name www.sahabat-gula-dev.us.to;
 
     location / {
@@ -54,12 +59,16 @@ sudo systemctl restart nginx
 
 # Install project dependencies
 echo "Installing project dependencies..."
-bun install
+bun install --ignore-scripts
 
 # Build the project
-echo "Building the project..."
-bun run build
+echo "Building the project..."ls
+
+bun build ./src/index.js --outdir ./build --target bun --external @hapi/hapi --external bun --external @google-cloud/firestore --minify --sourcemap=linked
 
 # Start the project
 echo "Starting the project..."
-bun run start:prod
+bun run ./build/index.js
+
+echo "Press enter to exit..."
+read
