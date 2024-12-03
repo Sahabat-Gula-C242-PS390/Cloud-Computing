@@ -60,11 +60,11 @@ bun install --ignore-scripts
 
 # Build the project
 echo "Building the project..."
-bun run build
+bun build ./src/index.js --outdir ./build --target bun --external @hapi/hapi --external bun --external @google-cloud/firestore --minify --sourcemap=linked
 
 # Start the project
 echo "Starting the project..."
-bun run start:prod
+bun run ./build/index.js
 
 echo "Press enter to exit..."
 read
