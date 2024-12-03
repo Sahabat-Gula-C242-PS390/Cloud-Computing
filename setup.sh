@@ -45,25 +45,6 @@ sudo ln -s /etc/nginx/sites-available/sahabat-gula /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 
-# Clone the repository
-if [ ! -d "Cloud-Computing" ]; then
-    git clone https://github.com/Sahabat-Gula-C242-PS390/Cloud-Computing.git
-else
-    echo "Directory Cloud-Computing already exists. Skipping clone."
-fi
-cd Cloud-Computing
-
-# Create a service account key
-cat <<EOF > sa-key.json
-INSERT_YOUR_SERVICE_ACCOUNT_KEY
-EOF
-
-# Set up environment variables
-cat <<EOF > .env
-GCP_PROJECT_ID="sahabat-gula"
-GCP_SA_KEY="sa-key.json"
-EOF
-
 # Install project dependencies
 bun install
 
