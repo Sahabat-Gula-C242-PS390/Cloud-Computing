@@ -56,7 +56,7 @@ sudo systemctl restart nginx
 
 # Install project dependencies
 echo "Installing project dependencies..."
-bun install
+bun install --ignore-scripts
 
 # Build the project
 echo "Building the project..."
