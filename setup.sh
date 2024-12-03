@@ -3,8 +3,9 @@
 # Update and install necessary packages
 echo "Updating package lists..."
 sudo apt update
+
 echo "Installing necessary packages..."
-sudo apt install -y curl gnupg nginx git unzip
+sudo apt install -y curl gnupg nginx git unzip screen
 
 # Install Bun
 echo "Installing Bun..."
@@ -14,6 +15,7 @@ curl -fsSL https://bun.sh/install | bash
 echo "Adding Bun to PATH..."
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+source ~/.bashrc
 
 # Verify Bun installation
 echo "Verifying Bun installation..."
@@ -63,3 +65,6 @@ bun run build
 # Start the project
 echo "Starting the project..."
 bun run start:prod
+
+echo "Press enter to exit..."
+read
