@@ -1,17 +1,22 @@
 #!/bin/bash
 
 # Update and install necessary packages
+echo "Updating package lists..."
 sudo apt update
+echo "Installing necessary packages..."
 sudo apt install -y curl gnupg nginx git unzip
 
 # Install Bun
+echo "Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
 
 # Add Bun to PATH
+echo "Adding Bun to PATH..."
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Verify Bun installation
+echo "Verifying Bun installation..."
 bun --version
 
 if [ $? -ne 0 ]; then
@@ -20,6 +25,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Set up Nginx configuration
+echo "Setting up Nginx configuration..."
 sudo tee /etc/nginx/sites-available/sahabat-gula <<EOF
 server {
     listen 80;
@@ -41,15 +47,19 @@ server {
 EOF
 
 # Enable the Nginx configuration
+echo "Enabling Nginx configuration..."
 sudo ln -s /etc/nginx/sites-available/sahabat-gula /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 
 # Install project dependencies
+echo "Installing project dependencies..."
 bun install
 
 # Build the project
+echo "Building the project..."
 bun run build
 
 # Start the project
+echo "Starting the project..."
 bun run start:prod
