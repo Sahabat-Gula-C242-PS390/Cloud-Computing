@@ -174,6 +174,81 @@ export async function login(request, h) {
   }
 }
 
+export async function changePassword(request, h) {
+  try {
+    const { userId } = request.params;
+    const { password, newPassword } = request.payload;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return h
+        .response({ status: "failed", error: "User not found!" })
+        .code(400);
+    }
+
+    const required = {
+      password,
+      newPassword,
+    };
+
+    customCheckField(required);
+
+    // Verifikasi password lama
+    const isPasswordMatch = await Bun.password.verify(password, user.password);
+    if (!isPasswordMatch) {
+      return h
+        .response({
+          status: "failed",
+          error: "Old password is incorrect!",
+        })
+        .code(401);
+    }
+
+    // Cek apakah password baru sama dengan password lama
+    const isSamePassword = await Bun.password.verify(
+      newPassword,
+      user.password,
+    );
+    if (isSamePassword) {
+      return h
+        .response({
+          status: "failed",
+          error: "New password must be different from the old password!",
+        })
+        .code(400);
+    }
+
+    // Hash password baru
+    const hashedNewPassword = await Bun.password.hash(newPassword);
+
+    // Update password di database
+    const updatedUser = await User.update(userId, {
+      password: hashedNewPassword,
+    });
+
+    if (updatedUser.password !== hashedNewPassword) {
+      return h
+        .response({
+          status: "failed",
+          error: "Failed to update password!",
+        })
+        .code(400);
+    }
+
+    // console.log("Updated password" + hashedNewPassword);
+    // console.log("Updated remote password" + updatedUser.password);
+
+    return h
+      .response({
+        status: "success",
+        message: "Password updated successfully!",
+      })
+      .code(200);
+  } catch (error) {
+    return h.response({ status: "failed", error: error.message }).code(400);
+  }
+}
+
 // export async function verify(request, h) {
 //   try {
 //     const { email, otpCode } = request.payload;

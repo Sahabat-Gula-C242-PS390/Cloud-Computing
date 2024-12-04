@@ -1,4 +1,9 @@
-import { signup, login, checkEmail } from "../handlers/auth.handler.js";
+import {
+  signup,
+  login,
+  checkEmail,
+  changePassword,
+} from "../handlers/auth.handler.js";
 import { createArticle, getArticles } from "../handlers/article.handler.js";
 import { deleteUser, getUser } from "../handlers/user.handler.js";
 // import { login } from "../handlers/login.js";
@@ -18,6 +23,11 @@ const authRoutes = [
     method: "POST",
     path: "/auth/login",
     handler: login,
+  },
+  {
+    method: "PUT",
+    path: "/auth/{userId}",
+    handler: changePassword,
   },
   {
     method: "GET",
