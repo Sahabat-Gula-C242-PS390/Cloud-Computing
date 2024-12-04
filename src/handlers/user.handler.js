@@ -7,7 +7,7 @@ export async function getUser(request, h) {
     const user = await User.findById(userId);
     if (!user) {
       return h
-        .response({ status: "failed", error: "User not found" })
+        .response({ status: "failed", error: "User not found!" })
         .code(404);
     }
 
@@ -28,14 +28,14 @@ export async function deleteUser(request, h) {
     const user = await User.findById(userId);
     if (!user) {
       return h
-        .response({ status: "failed", error: "User not found" })
+        .response({ status: "failed", error: "User not found!" })
         .code(404);
     }
 
     const result = User.findByIdAndDelete(userId);
     if (!result) {
       return h
-        .response({ status: "failed", error: "User not deleted" })
+        .response({ status: "failed", error: "User not deleted!" })
         .code(400);
     }
     return h.response({ status: "success" }).code(200);

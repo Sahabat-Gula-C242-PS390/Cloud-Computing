@@ -176,41 +176,22 @@ export async function login(request, h) {
 
 export async function changePassword(request, h) {
   try {
-    const { userId, password, newPassword } = request.payload;
+    const { userId } = request.params;
+    const { password, newPassword } = request.payload;
 
-    // Validasi input wajib
-    const requiredFields = { userId, password, newPassword };
-    for (const [field, value] of Object.entries(requiredFields)) {
-      if (!value || typeof value !== "string") {
-        return h
-          .response({
-            status: "failed",
-            error: `${field} is required and must be a valid string!`,
-          })
-          .code(400);
-      }
-    }
-
-    // Validasi panjang password baru
-    if (newPassword.length < 8) {
-      return h
-        .response({
-          status: "failed",
-          error: "New password must be at least 8 characters long!",
-        })
-        .code(400);
-    }
-
-    // Cari user berdasarkan userId
     const user = await User.findById(userId);
     if (!user) {
       return h
-        .response({
-          status: "failed",
-          error: "User not found!",
-        })
-        .code(404);
+        .response({ status: "failed", error: "User not found!" })
+        .code(400);
     }
+
+    const required = {
+      password,
+      newPassword,
+    };
+
+    customCheckField(required);
 
     // Verifikasi password lama
     const isPasswordMatch = await Bun.password.verify(password, user.password);
@@ -224,7 +205,10 @@ export async function changePassword(request, h) {
     }
 
     // Cek apakah password baru sama dengan password lama
-    const isSamePassword = await Bun.password.verify(newPassword, user.password);
+    const isSamePassword = await Bun.password.verify(
+      newPassword,
+      user.password,
+    );
     if (isSamePassword) {
       return h
         .response({
@@ -238,30 +222,32 @@ export async function changePassword(request, h) {
     const hashedNewPassword = await Bun.password.hash(newPassword);
 
     // Update password di database
-    const updatedUser = await User.update(userId, { password: hashedNewPassword });
+    const updatedUser = await User.update(userId, {
+      password: hashedNewPassword,
+    });
+
+    if (updatedUser.password !== hashedNewPassword) {
+      return h
+        .response({
+          status: "failed",
+          error: "Failed to update password!",
+        })
+        .code(400);
+    }
+
+    // console.log("Updated password" + hashedNewPassword);
+    // console.log("Updated remote password" + updatedUser.password);
 
     return h
       .response({
         status: "success",
         message: "Password updated successfully!",
-        data: {
-          userId: updatedUser.userId,
-          name: updatedUser.name,
-          email: updatedUser.email,
-          updatedAt: updatedUser.updatedAt,
-        },
       })
       .code(200);
   } catch (error) {
-    return h
-      .response({
-        status: "failed",
-        error: error.message,
-      })
-      .code(500);
+    return h.response({ status: "failed", error: error.message }).code(400);
   }
 }
-
 
 // export async function verify(request, h) {
 //   try {

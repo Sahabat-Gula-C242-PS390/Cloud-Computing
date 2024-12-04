@@ -25,8 +25,8 @@ const authRoutes = [
     handler: login,
   },
   {
-    method: "POST",
-    path: "/auth/change-password",
+    method: "PUT",
+    path: "/auth/{userId}",
     handler: changePassword,
   },
   {

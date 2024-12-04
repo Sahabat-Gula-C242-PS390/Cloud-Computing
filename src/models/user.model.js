@@ -466,14 +466,6 @@ class User {
       throw new Error("No valid fields to update!");
     }
 
-    /* const queryValidation = await User.findOne({
-      field: "email",
-      value: newData.email,
-    });
-    if (queryValidation) {
-      throw new Error("Email already exists!");
-    } */
-
     const idValidation = await User.findById(userId);
     if (!idValidation) {
       throw new Error("userId not found!");
@@ -561,56 +553,58 @@ class User {
   }
 
   // Tambahkan di dalam class User
-/**
- * Update the password for a specific user.
- *
- * @param {string} userId - The userId of the user.
- * @param {string} currentPassword - The current password for verification.
- * @param {string} newPassword - The new password to be updated.
- * @returns {Promise<Object>} The updated user data.
- * @throws {TypeError} If any of the arguments are not valid strings.
- * @throws {Error} If the userId is not found or the currentPassword is incorrect.
- */
-static async updatePassword(userId, currentPassword, newPassword) {
-  if (!userId || typeof userId !== "string") {
-    throw new TypeError("userId must be a valid string!");
-  }
-  if (!currentPassword || typeof currentPassword !== "string") {
-    throw new TypeError("currentPassword must be a valid string!");
-  }
-  if (!newPassword || typeof newPassword !== "string") {
-    throw new TypeError("newPassword must be a valid string!");
-  }
-  if (currentPassword === newPassword) {
-    throw new Error("The new password cannot be the same as the current password!");
-  }
+  /**
+   * Update the password for a specific user.
+   *
+   * @param {string} userId - The userId of the user.
+   * @param {string} currentPassword - The current password for verification.
+   * @param {string} newPassword - The new password to be updated.
+   * @returns {Promise<Object>} The updated user data.
+   * @throws {TypeError} If any of the arguments are not valid strings.
+   * @throws {Error} If the userId is not found or the currentPassword is
+   *   incorrect.
+   */
+  static async updatePassword(userId, currentPassword, newPassword) {
+    if (!userId || typeof userId !== "string") {
+      throw new TypeError("userId must be a valid string!");
+    }
+    if (!currentPassword || typeof currentPassword !== "string") {
+      throw new TypeError("currentPassword must be a valid string!");
+    }
+    if (!newPassword || typeof newPassword !== "string") {
+      throw new TypeError("newPassword must be a valid string!");
+    }
+    if (currentPassword === newPassword) {
+      throw new Error(
+        "The new password cannot be the same as the current password!",
+      );
+    }
 
-  // Find the user by userId
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new Error("User not found!");
+    // Find the user by userId
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    // Verify the current password
+    if (user.password !== currentPassword) {
+      throw new Error("Current password is incorrect!");
+    }
+
+    // Update the password
+    try {
+      const updatedAt = Timestamp.now();
+      await usersCollection.doc(userId).update({
+        password: newPassword,
+        updatedAt: updatedAt,
+      });
+
+      // Return the updated user data
+      return await User.findById(userId);
+    } catch (error) {
+      throw new Error(`Error updating password for user ${userId}: ${error}`);
+    }
   }
-
-  // Verify the current password
-  if (user.password !== currentPassword) {
-    throw new Error("Current password is incorrect!");
-  }
-
-  // Update the password
-  try {
-    const updatedAt = Timestamp.now();
-    await usersCollection.doc(userId).update({
-      password: newPassword,
-      updatedAt: updatedAt,
-    });
-
-    // Return the updated user data
-    return await User.findById(userId);
-  } catch (error) {
-    throw new Error(`Error updating password for user ${userId}: ${error}`);
-  }
-}
-
 }
 
 export default User;
