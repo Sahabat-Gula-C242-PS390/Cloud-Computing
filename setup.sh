@@ -35,8 +35,8 @@ sudo tee /etc/nginx/sites-available/sahabat-gula <<EOF
 server {
     listen 80;
     client_max_body_size 10M;
-    server_name $PUBLIC_IP sahabat-gula-dev.us.to;
-    server_name www.sahabat-gula-dev.us.to;
+    server_name $PUBLIC_IP sahabat-gula.us.to;
+    server_name www.sahabat-gula.us.to;
 
     location / {
         proxy_pass http://localhost:3000;
