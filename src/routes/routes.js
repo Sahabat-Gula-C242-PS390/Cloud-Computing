@@ -1,4 +1,11 @@
-import { signup, login, checkEmail, changePassword } from "../handlers/auth.handler.js";
+import {
+  signup,
+  login,
+  checkEmail,
+  changePassword,
+} from "../handlers/auth.handler.js";
+import { createArticle, getArticles } from "../handlers/article.handler.js";
+import { deleteUser, getUser } from "../handlers/user.handler.js";
 // import { login } from "../handlers/login.js";
 
 const authRoutes = [
@@ -21,6 +28,33 @@ const authRoutes = [
     method: "POST",
     path: "/auth/change-password",
     handler: changePassword,
+  },
+  {
+    method: "GET",
+    path: "/user/{userId}",
+    handler: getUser,
+  },
+  {
+    method: "DELETE",
+    path: "/user/{userId}",
+    handler: deleteUser,
+  },
+  {
+    method: "GET",
+    path: "/articles",
+    handler: getArticles,
+  },
+  {
+    method: "POST",
+    path: "/article",
+    handler: createArticle,
+    options: {
+      payload: {
+        parse: true,
+        multipart: { output: "stream" },
+        maxBytes: 10 * 1024 * 1024,
+      },
+    },
   },
   {
     method: "*",
