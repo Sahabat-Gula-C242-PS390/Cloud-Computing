@@ -90,6 +90,25 @@ class Article {
       throw new Error(`Error getting documents: ${error}`);
     }
   }
+
+  static async findByIdAndDelete(articleId) {
+    const required = {
+      articleId,
+    };
+    customCheckField(required);
+
+    const idValidation = await Article.findById(articleId);
+    if (!idValidation) {
+      throw new Error("ArticleId not found!");
+    }
+
+    try {
+      await articlesCollection.doc(articleId).delete();
+      return (await Article.findById(articleId)) === null;
+    } catch (error) {
+      throw new Error(`Error deleting article ${articleId}: ${error}`);
+    }
+  }
 }
 
 export default Article;

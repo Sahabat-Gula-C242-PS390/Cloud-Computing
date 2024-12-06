@@ -6,6 +6,7 @@ import {
 } from "../handlers/auth.handler.js";
 import {
   createArticle,
+  deleteArticle,
   getAllArticles,
   getArticle,
 } from "../handlers/article.handler.js";
@@ -52,6 +53,11 @@ const authRoutes = [
     method: "GET",
     path: "/article/{articleId}",
     handler: getArticle,
+  },
+  {
+    method: "DELETE",
+    path: "/article/{articleId}",
+    handler: deleteArticle,
   },
   {
     method: "POST",

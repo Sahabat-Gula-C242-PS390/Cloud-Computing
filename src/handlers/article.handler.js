@@ -2,7 +2,7 @@ import Article from "../models/article.model.js";
 import { randomUUIDv7 } from "bun";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-import { uploadArticleImage } from "../utils/bucket.js";
+import { deleteArticleImage, uploadArticleImage } from "../utils/bucket.js";
 
 export async function getAllArticles(request, h) {
   try {
@@ -83,6 +83,32 @@ export async function createArticle(request, h) {
         },
       })
       .code(201);
+  } catch (error) {
+    return h.response({ status: "failed", error: error.message }).code(400);
+  }
+}
+
+export async function deleteArticle(request, h) {
+  try {
+    const { articleId } = request.params;
+
+    const article = await Article.findById(articleId);
+    if (!article) {
+      return h
+        .response({ status: "failed", error: "Article not found!" })
+        .code(404);
+    }
+
+    await deleteArticleImage(articleId);
+
+    const result = await Article.findByIdAndDelete(articleId);
+    if (!result) {
+      return h
+        .response({ status: "failed", error: "Article not deleted!" })
+        .code(400);
+    }
+
+    return h.response({ status: "success" }).code(200);
   } catch (error) {
     return h.response({ status: "failed", error: error.message }).code(400);
   }
