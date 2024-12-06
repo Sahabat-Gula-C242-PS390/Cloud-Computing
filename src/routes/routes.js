@@ -4,7 +4,11 @@ import {
   checkEmail,
   changePassword,
 } from "../handlers/auth.handler.js";
-import { createArticle, getArticles } from "../handlers/article.handler.js";
+import {
+  createArticle,
+  getAllArticles,
+  getArticle,
+} from "../handlers/article.handler.js";
 import { deleteUser, getUser } from "../handlers/user.handler.js";
 // import { login } from "../handlers/login.js";
 
@@ -42,7 +46,12 @@ const authRoutes = [
   {
     method: "GET",
     path: "/articles",
-    handler: getArticles,
+    handler: getAllArticles,
+  },
+  {
+    method: "GET",
+    path: "/article/{articleId}",
+    handler: getArticle,
   },
   {
     method: "POST",
