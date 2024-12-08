@@ -113,3 +113,18 @@ export async function deleteArticle(request, h) {
     return h.response({ status: "failed", error: error.message }).code(400);
   }
 }
+
+export async function deleteAllArticle(request, h) {
+  try {
+    const articles = await Article.findAll();
+
+    for (const article of articles) {
+      await deleteArticleImage(article.articleId);
+      await Article.findByIdAndDelete(article.articleId);
+    }
+
+    return h.response({ status: "success" }).code(200);
+  } catch (error) {
+    return h.response({ status: "failed", error: error.message }).code(400);
+  }
+}

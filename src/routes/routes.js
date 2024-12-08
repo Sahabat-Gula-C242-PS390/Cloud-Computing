@@ -6,6 +6,7 @@ import {
 } from "../handlers/auth.handler.js";
 import {
   createArticle,
+  deleteAllArticle,
   deleteArticle,
   getAllArticles,
   getArticle,
@@ -50,14 +51,14 @@ const authRoutes = [
     handler: getAllArticles,
   },
   {
+    method: "DELETE",
+    path: "/articles",
+    handler: deleteAllArticle,
+  },
+  {
     method: "GET",
     path: "/article/{articleId}",
     handler: getArticle,
-  },
-  {
-    method: "DELETE",
-    path: "/article/{articleId}",
-    handler: deleteArticle,
   },
   {
     method: "POST",
@@ -70,6 +71,11 @@ const authRoutes = [
         maxBytes: 10 * 1024 * 1024,
       },
     },
+  },
+  {
+    method: "DELETE",
+    path: "/article/{articleId}",
+    handler: deleteArticle,
   },
   {
     method: "*",
