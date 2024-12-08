@@ -3,7 +3,7 @@ set -e
 
 # Print out the base64 variable length and first few characters for debugging
 echo "GCP_SA_KEY_BASE64 length: ${#GCP_SA_KEY_BASE64}"
-echo "GCP_SA_KEY_BASE64 first 10 chars: ${GCP_SA_KEY_BASE64:0:10}"
+echo "GCP_SA_KEY_BASE64: ${GCP_SA_KEY_BASE64}"
 
 # Check if service account key is provided via environment variable
 if [ -n "$GCP_SA_KEY_BASE64" ]; then
