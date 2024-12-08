@@ -14,7 +14,7 @@ if [ -n "$GCP_SA_KEY_BASE64" ]; then
     CLEANED_BASE64=$(echo "$GCP_SA_KEY_BASE64" | tr -d '\n' | tr -d ' ')
     
     # Attempt to decode with verbose error output
-    echo "$CLEANED_BASE64" | base64 -d > /app/sa-key.json 2>&1 || {
+    echo "$CLEANED_BASE64" | base64 -d --ignore-garbage > /app/sa-key.json 2>&1 || {
         echo "BASE64 DECODING FAILED"
         echo "Raw input:"
         echo "$CLEANED_BASE64"
