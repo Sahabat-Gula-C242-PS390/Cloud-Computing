@@ -15,7 +15,9 @@ export async function getUser(request, h) {
     // eslint-disable-next-line no-unused-vars
     const { password, ...userData } = user;
 
-    return h.response({ status: "success", data: userData }).code(200);
+    return h
+      .response({ status: "success", userId: userData.userId, data: userData })
+      .code(200);
   } catch (error) {
     return h.response({ status: "failed", error: error.message }).code(400);
   }

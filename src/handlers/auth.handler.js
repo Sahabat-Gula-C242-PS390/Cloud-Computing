@@ -25,30 +25,6 @@ export async function signup(request, h) {
       gulaHarian = 282,
     } = request.payload;
 
-    // const required = {
-    //   email,
-    //   name,
-    //   password,
-    //   gender,
-    //   umur,
-    //   berat,
-    //   tinggi,
-    //   lingkarPinggang,
-    //   tekananDarahTinggi,
-    //   gulaDarahTinggi,
-    //   riwayatDiabetes,
-    //   tingkatAktivitas,
-    //   konsumsiBuah,
-    //   kaloriHarian,
-    //   karbohidratHarian,
-    //   lemakHarian,
-    //   proteinHarian,
-    //   gulaHarian,
-    // };
-    // console.log("success required");
-    // userCheckField(required);
-    // console.log("success custom check field");
-
     const user = await User.findOne({ field: "email", value: email });
     if (user) {
       return h
@@ -85,7 +61,24 @@ export async function signup(request, h) {
     const userId = await newUser.save();
     // console.log("success save user");
 
-    return h.response({ status: "success", userId }).code(200);
+    // Get user data
+    const userNew = await User.findById(userId);
+    if (!userNew) {
+      return h
+        .response({
+          status: "failed",
+          error: "Failed to get user data!",
+        })
+        .code(400);
+    }
+
+    // Password should not be returned
+    // eslint-disable-next-line no-unused-vars
+    const { password: userNewPassword, ...userData } = userNew;
+
+    return h
+      .response({ status: "success", userId: userData.userId, data: userData })
+      .code(201);
   } catch (error) {
     return h.response({ status: "failed", error: error.message }).code(400);
   }
@@ -116,7 +109,7 @@ export async function checkEmail(request, h) {
       .response({
         status: "success",
       })
-      .code(201);
+      .code(200);
   } catch (error) {
     return h.response({ status: "failed", error: error.message }).code(400);
   }
@@ -163,10 +156,15 @@ export async function login(request, h) {
         .code(401);
     }
 
+    // Password should not be returned
+    // eslint-disable-next-line no-unused-vars
+    const { password: userPassword, ...userData } = user;
+
     return h
       .response({
         status: "success",
         userId: user.userId,
+        data: userData,
       })
       .code(200);
   } catch (error) {
