@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import Bun from "bun";
+import path from "path";
 import { customCheckField } from "../utils/checkField.js";
+import { predictGroceryNutrition, loadModel } from "../models/predict.js";
 
 export async function signup(request, h) {
   try {
@@ -244,6 +246,65 @@ export async function changePassword(request, h) {
       .code(200);
   } catch (error) {
     return h.response({ status: "failed", error: error.message }).code(400);
+  }
+}
+
+
+
+let model;
+// Load the model once on server startup
+export async function initializeModel() {
+  try {
+    const modelPath = path.resolve(__dirname, '../models/model.json'); // Path to your model.json file
+    model = await loadModel(modelPath);
+    console.log('Model loaded successfully from local storage.');
+  } catch (error) {
+    console.error('Error loading model:', error);
+    throw new Error('Failed to load model');
+  }
+}
+
+export async function predictHandler(request, h) {
+  try {
+    // Check if the model is loaded
+    if (!model) {
+      throw new Error('Model is not loaded. Ensure the server initializes it on startup.');
+    }
+
+    const { image } = request.payload;
+    if (!image || !image.hapi || !image._data || image._data.length === 0) {
+      return h.response({
+        status: 'fail',
+        error: false,
+        message: 'Image is required',
+      }).code(400);
+    }
+
+    // Call prediction service
+    const { item, nutrition, confidenceScore } = await predictGroceryNutrition(model, image);
+
+    const createdAt = new Date().toISOString(); // Current timestamp
+
+    // Prepare response data
+    const data = {
+      item,
+      nutrition,
+      confidenceScore: Number(confidenceScore),
+      createdAt,
+    };
+
+    return h.response({
+      status: 'success',
+      error: false,
+      data,
+    }).code(200);
+
+  } catch (error) {
+    console.error('Prediction error:', error.message);
+    return h.response({
+      status: 'fail',
+      message: error.message,
+    }).code(500);
   }
 }
 
