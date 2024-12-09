@@ -3,6 +3,7 @@ import {
   login,
   checkEmail,
   changePassword,
+  predictHandler,
 } from "../handlers/auth.handler.js";
 import {
   createArticle,
@@ -78,6 +79,20 @@ const authRoutes = [
     handler: deleteArticle,
   },
   {
+    method: 'POST',
+    path: '/predict',
+    handler: predictHandler,
+    options: {
+      payload: {
+        maxBytes: 5 * 1024 * 1024, // Batas ukuran payload 5 MB
+        output: 'stream',
+        parse: true,
+        allow: 'multipart/form-data',
+        multipart: true,
+      }
+    }
+  },
+  {
     method: "*",
     path: "/{any*}",
     handler: (request, h) => {
@@ -85,6 +100,7 @@ const authRoutes = [
     },
   },
 ];
+
 
 const routes = [...authRoutes];
 
