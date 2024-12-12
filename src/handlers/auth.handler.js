@@ -145,9 +145,18 @@ export async function login(request, h) {
 
     const user = await User.findOne({ field: "email", value: email });
 
+    if (!user) {
+      return h
+        .response({
+          status: "failed",
+          error: "Invalid email or password!",
+        })
+        .code(401);
+    }
+
     const isMatch = await Bun.password.verify(password, user.password);
 
-    if (!user || !isMatch) {
+    if (!isMatch) {
       return h
         .response({
           status: "failed",

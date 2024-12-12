@@ -12,7 +12,12 @@ import {
   getArticle,
 } from "../handlers/article.handler.js";
 import { deleteUser, getUser } from "../handlers/user.handler.js";
-import { predictFood } from "../handlers/food.handler.js";
+import { predictFood, savePredictFood } from "../handlers/food.handler.js";
+import {
+  deleteUserLog,
+  getUserLog,
+  getUserLogs,
+} from "../handlers/userLog.handler.js";
 // import { login } from "../handlers/login.js";
 
 const authRoutes = [
@@ -48,6 +53,21 @@ const authRoutes = [
   },
   {
     method: "GET",
+    path: "/user/{userId}/logs",
+    handler: getUserLogs,
+  },
+  {
+    method: "DELETE",
+    path: "/user/{userId}/log/{userLogId}",
+    handler: deleteUserLog,
+  },
+  {
+    method: "GET",
+    path: "/user/{userId}/log/{userLogId}",
+    handler: getUserLog,
+  },
+  {
+    method: "GET",
     path: "/articles",
     handler: getAllArticles,
   },
@@ -77,6 +97,19 @@ const authRoutes = [
     method: "POST",
     path: "/predict",
     handler: predictFood,
+    options: {
+      payload: {
+        parse: true,
+        multipart: true,
+        output: "stream",
+        maxBytes: 10 * 1024 * 1024,
+      },
+    },
+  },
+  {
+    method: "POST",
+    path: "/predict/{userId}",
+    handler: savePredictFood,
     options: {
       payload: {
         parse: true,

@@ -158,3 +158,23 @@ export function foodCheckField(required) {
     }
   }
 }
+
+export function userLogCheckField(required) {
+  for (const [field, value] of Object.entries(required)) {
+    if (value === undefined) {
+      throw new TypeError(`${field} is required`);
+    }
+
+    // String fields
+    if (["userId", "foodId", "imageUrl", "userLogId"].includes(field)) {
+      if (typeof value !== "string") {
+        throw new TypeError(`${field} must be a valid string`);
+      }
+    }
+
+    // Boolean fields
+    if (field === "isDeleted" && typeof value !== "boolean") {
+      throw new TypeError(`${field} must be a boolean!`);
+    }
+  }
+}

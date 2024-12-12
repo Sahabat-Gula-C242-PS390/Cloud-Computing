@@ -7,7 +7,7 @@ const foodCollection = db.collection("foods");
 class Food {
   /**
    * Create a new Food instance
-   * 
+   *
    * @param {object} data - Food data
    * @param {string} data.foodId - The foodId or food label
    * @param {string} data.name - The food name
@@ -15,8 +15,9 @@ class Food {
    * @param {number} data.karbohidrat - The carbohydrate content in grams
    * @param {number} data.protein - The protein content in grams
    * @param {number} data.lemak - The fat content in grams
-   * @throws {TypeError} if data is not a valid object
-   * @throws {TypeError} if foodId, name, gula, karbohidrat, protein, or lemak is not a valid string or number
+   * @throws {TypeError} If data is not a valid object
+   * @throws {TypeError} If foodId, name, gula, karbohidrat, protein, or lemak
+   *   is not a valid string or number
    */
   constructor(data) {
     if (data === undefined || typeof data !== "object") {
@@ -46,9 +47,9 @@ class Food {
 
   /**
    * Save food data to Firestore
-   * 
-   * @returns {Promise<string>} foodId
-   * @throws {Error} if error adding document
+   *
+   * @returns {Promise<string>} FoodId
+   * @throws {Error} If error adding document
    */
   async save() {
     try {
@@ -71,17 +72,17 @@ class Food {
 
   /**
    * Find food nutrition data by foodId. If not found, return null
-   * 
+   *
    * @param {string} foodId - The foodId to find
-   * @returns {Promise<object|null>} food nutrition data
-   * @throws {Error} if error getting document
-   * @throws {TypeError} if foodId is not a string
+   * @returns {Promise<object | null>} Food nutrition data
+   * @throws {Error} If error getting document
+   * @throws {TypeError} If foodId is not a string
    */
   static async findById(foodId) {
     if (!foodId || typeof foodId !== "string") {
       throw new TypeError("foodId must be a valid string!");
     }
-    
+
     try {
       const foodDoc = await foodCollection.doc(foodId).get();
       if (!foodDoc.exists) {
