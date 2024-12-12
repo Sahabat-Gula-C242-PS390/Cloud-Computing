@@ -9,6 +9,34 @@ const storage = new Storage({
 const bucketName = "sahabat-gula.firebasestorage.app";
 const bucket = storage.bucket(bucketName);
 
+export async function uploadUserLogImage(filePath, userLogId) {
+  try {
+    const [file] = await bucket.upload(filePath, {
+      destination: "userLogs/" + userLogId + ".jpg",
+      preconditionOpts: { ifGenerationMatch: 0 },
+      metadata: {
+        cacheControl: "public, max-age=31536000",
+      },
+    });
+
+    await file.makePublic();
+
+    return `https://storage.googleapis.com/${bucketName}/userLogs/${userLogId}.jpg`;
+  } catch (error) {
+    throw new Error(`Error uploading file: ${error}`);
+  }
+}
+
+export async function deleteUserLogImage(userLogId) {
+  try {
+    const file = bucket.file("userLogs/" + userLogId + ".jpg");
+
+    await file.delete();
+  } catch (error) {
+    throw new Error(`Error deleting file: ${error}`);
+  }
+}
+
 export async function uploadArticleImage(filePath, articleId) {
   try {
     const [file] = await bucket.upload(filePath, {
