@@ -12,6 +12,7 @@ import {
   getArticle,
 } from "../handlers/article.handler.js";
 import { deleteUser, getUser } from "../handlers/user.handler.js";
+import { predictFood } from "../handlers/food.handler.js";
 // import { login } from "../handlers/login.js";
 
 const authRoutes = [
@@ -68,6 +69,19 @@ const authRoutes = [
       payload: {
         parse: true,
         multipart: { output: "stream" },
+        maxBytes: 10 * 1024 * 1024,
+      },
+    },
+  },
+  {
+    method: "POST",
+    path: "/predict",
+    handler: predictFood,
+    options: {
+      payload: {
+        parse: true,
+        multipart: true,
+        output: "stream",
         maxBytes: 10 * 1024 * 1024,
       },
     },

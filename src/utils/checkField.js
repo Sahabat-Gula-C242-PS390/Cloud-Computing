@@ -125,3 +125,36 @@ export function userCheckField(required) {
     }
   }
 }
+
+/**
+ * Validate food fields according to food model rules
+ *
+ * @param {Object} required - Food data object
+ * @param {string} required.foodId - Food ID
+ * @param {string} required.name - Food name
+ * @param {number} required.gula - Sugar content
+ * @param {number} required.karbohidrat - Carb content
+ * @param {number} required.protein - Protein content
+ * @param {number} required.lemak - Fat content
+ * @throws {TypeError} If any field fails validation
+ */
+export function foodCheckField(required) {
+  for (const [field, value] of Object.entries(required)) {
+    if (value === undefined) {
+      throw new TypeError(`${field} is required`);
+    }
+
+    if (["gula", "karbohidrat", "protein", "lemak"].includes(field)) {
+      if (typeof value !== "number") {
+        throw new TypeError(`${field} must be a valid number`);
+      }
+    }
+
+    // String fields
+    if (["name", "foodId"].includes(field)) {
+      if (typeof value !== "string") {
+        throw new TypeError(`${field} must be a valid string`);
+      }
+    }
+  }
+}

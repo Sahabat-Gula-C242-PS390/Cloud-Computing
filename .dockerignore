@@ -1,0 +1,5 @@
+**/.devcontainer
+**/.vscode
+assets
+dev
+**/node_modules
