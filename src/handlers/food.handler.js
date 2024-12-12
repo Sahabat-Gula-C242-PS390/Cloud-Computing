@@ -40,6 +40,7 @@ export async function predictFood(request, h) {
         const nutrition = await Food.findById(item.label);
         return {
           ...item,
+          name: nutrition.name,
           gula: nutrition.gula,
           karbohidrat: nutrition.karbohidrat,
           lemak: nutrition.lemak,

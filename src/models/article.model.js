@@ -5,6 +5,19 @@ import { customCheckField } from "../utils/checkField.js";
 const articlesCollection = db.collection("articles");
 
 class Article {
+  /**
+   * Create a new Article instance
+   * 
+   * @param {object} data - Article data
+   * @param {string} data.articleId - The articleId
+   * @param {string} data.imageUrl - The image URL
+   * @param {string} data.title - The article title
+   * @param {string} data.subtitle - The article subtitle
+   * @param {string} data.content - The article content
+   * @param {string} data.originalLink - The original article link
+   * @throws {TypeError} if data is not a valid object
+   * @throws {TypeError} if articleId, imageUrl, title, subtitle, content, or originalLink is not a valid string
+   */
   constructor(data) {
     if (data === undefined || typeof data !== "object") {
       throw new TypeError("data must be a valid object!");
@@ -31,6 +44,12 @@ class Article {
     this.updatedAt = this.createdAt;
   }
 
+  /**
+   * Save article data to Firestore
+   * 
+   * @returns {Promise<string>} articleId
+   * @throws {Error} if error adding document
+   */
   async save() {
     try {
       await articlesCollection.doc(this.articleId).set({
@@ -50,7 +69,19 @@ class Article {
     }
   }
 
+  /**
+   * Update article data in Firestore
+   * 
+   * @param {articleId} articleId - The articleId
+   * @returns {Promise<Object | null>} The article data or null if articleId not found
+   * @throws {Error} if error occurs when finding document
+   * @throws {TypeError} if articleId is not a valid string
+   */
   static async findById(articleId) {
+    if (!articleId || typeof articleId !== "string") {
+      throw new TypeError("articleId must be a valid string!");
+    }
+
     try {
       const articleDoc = await articlesCollection.doc(articleId).get();
       if (!articleDoc.exists) {
@@ -69,6 +100,12 @@ class Article {
     }
   }
 
+  /**
+   * Find all articles in Firestore
+   * 
+   * @returns {Promise<Array<Object>>} An array of article objects
+   * @throws {Error} if error occurs when finding documents
+   */
   static async findAll() {
     try {
       const articlesSnapshot = await articlesCollection
@@ -91,6 +128,14 @@ class Article {
     }
   }
 
+  /**
+   * Update delete article data in Firestore by articleId
+   * 
+   * @param {string} articleId - The articleId to delete
+   * @returns {Promise<boolean>} true if articleId is successfully deleted, false otherwise
+   * @throws {Error} if error occurs when deleting document
+   * @throws {TypeError} if articleId is not a valid string
+   */
   static async findByIdAndDelete(articleId) {
     const required = {
       articleId,
