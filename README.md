@@ -4,9 +4,9 @@
 
 # Sahabat Gula API
 
-Sahabat Gula backend API created for Sahabat Gula app as a Capstone Project from Bangkit 2024.
+Sahabat Gula API is created for Sahabat Gula application for Capstone Project from Bangkit 2024.
 
-Sahabat Gula API handle the request of registration, email verification, user customization, nutrition computation, and much more!
+This repository store the Sahabat Gula API code. The API handles most application features, such as registration, login, email verification, user customization, food prediction, nutrition tracking, articles, and much more! This API is powered by Google Cloud, Hapi, and Bun.
 
 ![bruno](assets/thumbnail-1.png) <br /><br />
 
@@ -17,7 +17,7 @@ This project is under development, but we will do our best to keep things stable
 ## Usage
 
 You can use our latest commercial API deployment in
-[sahabat-gula.us.to](http://sahabat-gula.us.to).
+[sahabat-gula-388071001917.asia-southeast2.run.app](https://sahabat-gula-388071001917.asia-southeast2.run.app).
 
 ## Deploying Yourself
 
@@ -34,6 +34,7 @@ You need to also create `.env` file with the following variables:
 ```env
 GCP_PROJECT_ID="your-project-id"
 GCP_SA_KEY="path/to/your/service-account-key.json"
+
 ```
 
 ### Building
